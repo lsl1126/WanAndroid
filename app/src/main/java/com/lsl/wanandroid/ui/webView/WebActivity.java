@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebResourceError;
@@ -13,8 +12,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 
 import com.kennyc.view.MultiStateView;
@@ -23,6 +24,7 @@ import com.lsl.wanandroid.base.BaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.view.KeyEvent.KEYCODE_BACK;
 
@@ -36,6 +38,8 @@ public class WebActivity extends BaseActivity {
     TextView tvTitle;
     @BindView(R.id.webView)
     WebView webView;
+    @BindView(R.id.image_Collect)
+    AppCompatImageView imageCollect;
 
     public static void startIntent(Context context, String title, String url) {
         Intent intent = new Intent(context, WebActivity.class);
@@ -78,22 +82,16 @@ public class WebActivity extends BaseActivity {
         webView.loadUrl(url);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_collect, menu);
-        getMenuInflater().inflate(R.menu.menu_share, menu);
-//        menu.findItem(R.id.menu_share).getActionView().setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-
-//        menu.findItem(R.id.menu_collect).getActionView().setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-        return true;
+    @OnClick({R.id.image_Share, R.id.image_Collect})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.image_Share:
+                Toast.makeText(this, "Ok", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.image_Collect:
+                Toast.makeText(this, "Ok", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     @Override
@@ -113,10 +111,5 @@ public class WebActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
+
 }
