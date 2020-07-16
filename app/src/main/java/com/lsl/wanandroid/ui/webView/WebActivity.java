@@ -82,11 +82,11 @@ public class WebActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_collect, menu);
         getMenuInflater().inflate(R.menu.menu_share, menu);
-        menu.findItem(R.id.menu_share).getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+//        menu.findItem(R.id.menu_share).getActionView().setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//            }
+//        });
 
 //        menu.findItem(R.id.menu_collect).getActionView().setOnClickListener(new View.OnClickListener() {
 //            @Override
