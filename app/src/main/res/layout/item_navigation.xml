@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:background="@color/colorWhite"
+    android:elevation="@dimen/dp_1"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_16"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingRight="@dimen/dp_16"
+    android:paddingBottom="@dimen/dp_10"
+    tools:targetApi="lollipop">
+
+    <TextView
+        android:id="@+id/tv_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_gray1000"
+        android:textSize="@dimen/sp_16" />
+
+    <com.zhy.view.flowlayout.TagFlowLayout
+        android:id="@+id/flowLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10" />
+</LinearLayout>

@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">WanAndroid</string>
+    <string name="text_password">密码</string>
+    <string name="text_login">登录</string>
+    <string name="text_username_mail_phone">用户名/邮箱/手机号</string>
+    <string name="text_account_login">账号登录</string>
+    <string name="text_home_page">首页</string>
+    <string name="text_discover">发现</string>
+    <string name="text_navigation">导航</string>
+    <string name="text_my">我的</string>
+    <string name="text_nhs">体系</string>
+    <string name="text_search_content">搜索感兴趣的内容</string>
+    <string name="text_search">搜索</string>
+    <string name="text_data_error">数据加载失败</string>
+    <string name="text_reload">重新加载</string>
+    <string name="text_data_empty">没有相关数据</string>
+    <string name="text_commonly_used_web_site">常用网址</string>
+    <string name="text_hot_search">热门搜索</string>
+    <string name="text_login_register">登录/注册</string>
+    <string name="text_collect">收藏</string>
+    <string name="text_share">分享</string>
+</resources>

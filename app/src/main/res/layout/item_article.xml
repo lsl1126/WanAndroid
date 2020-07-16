@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dp_8"
+    android:background="@color/colorWhite"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="@dimen/dp_16"
+    tools:ignore="UnusedAttribute">
+
+    <TextView
+        android:id="@+id/tv_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:text="置顶"
+        android:textColor="@color/color_red500"
+        android:textSize="@dimen/sp_12"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tv_shareUser"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_shareUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="鸿洋"
+        android:textSize="@dimen/sp_14"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintLeft_toRightOf="@id/tv_top"
+        app:layout_constraintRight_toLeftOf="@id/tv_superChapterName"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_superChapterName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:text="开源项目主Tab"
+        android:textColor="@color/color_gray800"
+        android:textSize="@dimen/sp_12"
+        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintLeft_toRightOf="@id/tv_shareUser"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="浅析NestedScrolling嵌套滑动机制之实践篇-自定义Behavior实现小米音乐歌手详情"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintBottom_toTopOf="@id/tv_desc"
+        app:layout_constraintTop_toBottomOf="@id/tv_shareUser" />
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_5"
+        android:ellipsize="end"
+        android:maxLines="4"
+        android:text="使用Canvas进行股票行情图K线的绘制。（1）股票行情图K线数据的集中处理（2）股票行情图双缓冲绘制，具体绘制流程在子线程当中进行，然后将绘制好的bitmap交由onDraw当中的canvas直接进行绘制，打开GPU呈现模式，发现越复杂的绘制，对于GPU消耗有所下降\r\n（3）主图和附图完全隔离，最终达到的效果是各种附图和主图能够进行随意组合。（4）项目在业余时间，慢慢的优化和更新当中"
+        android:textColor="@color/color_gray800"
+        android:textSize="@dimen/sp_14"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tv_niceDate"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <TextView
+        android:id="@+id/tv_fresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_5"
+        android:gravity="start"
+        android:text="新"
+        android:textColor="@color/color_red500"
+        android:textSize="@dimen/sp_12"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tv_niceDate"
+        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+
+    <TextView
+        android:id="@+id/tv_niceDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="start"
+        android:text="2020-06-09 00:23"
+        android:textColor="@color/color_gray800"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tv_fresh"
+        app:layout_constraintRight_toLeftOf="@id/image_Collect"
+        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+
+    <ImageView
+        android:layout_marginTop="@dimen/dp_10"
+        android:id="@+id/image_Collect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?actionBarItemBackground"
+        android:src="@drawable/ic_collect_noselect"
+        app:layout_constraintTop_toBottomOf="@id/tv_desc"
+        app:layout_constraintLeft_toRightOf="@id/tv_niceDate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

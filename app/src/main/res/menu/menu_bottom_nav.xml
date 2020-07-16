@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home_page"
+        android:icon="@drawable/ic_main_home_page"
+        android:title="@string/text_home_page" />
+    <item
+        android:id="@+id/navigation_nhs"
+        android:icon="@drawable/ic_main_nhs"
+        android:title="@string/text_nhs" />
+    <item
+        android:id="@+id/navigation_discover"
+        android:icon="@drawable/ic_main_discover"
+        android:title="@string/text_discover" />
+    <item
+        android:id="@+id/navigation_navigation"
+        android:icon="@drawable/ic_main_navigation"
+        android:title="@string/text_navigation" />
+    <item
+        android:id="@+id/navigation_my"
+        android:icon="@drawable/ic_main_my"
+        android:title="@string/text_my" />
+</menu>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorWhite"
+        app:contentInsetStartWithNavigation="0dp">
+
+        <LinearLayout
+            android:id="@+id/ll_Search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_35"
+                android:layout_weight="1"
+                android:background="@drawable/shape_search_bg"
+                android:paddingStart="@dimen/dp_16"
+                android:paddingLeft="@dimen/dp_16"
+                android:paddingEnd="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_10">
+
+                <com.lsl.wanandroid.wdiget.ClearEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="@string/text_search_content"
+                    android:imeOptions="actionSearch"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="LabelFor" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:text="@string/text_search"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/sp_16" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+</LinearLayout>
