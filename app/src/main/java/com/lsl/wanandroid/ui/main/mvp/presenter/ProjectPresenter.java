@@ -26,7 +26,7 @@ public class ProjectPresenter extends BasePresenter<ProjectContract.IProjectView
         this.model = new ProjectModel();
     }
 
-//    //嵌套请求项目分类和首次显示的项目文章列表
+    //    //嵌套请求项目分类和首次显示的项目文章列表
 //    @Override
 //    public void getFirstProjectArticle(RxFragment fragment) {
 //        model.getProjectTree().flatMap(new Function<BaseResponse<List<ProjectTree>>, ObservableSource<BaseResponse<ArticlesInfo>>>() {
@@ -53,7 +53,6 @@ public class ProjectPresenter extends BasePresenter<ProjectContract.IProjectView
 //            }
 //        });
 //    }
-
     @Override
     public void getProjectTree(RxFragment fragment) {
         model.getProjectTree().compose(RxHelper.observableIO2Main(fragment)).subscribe(new BaseResObserver<List<ArticlesTree>>() {
@@ -70,16 +69,16 @@ public class ProjectPresenter extends BasePresenter<ProjectContract.IProjectView
     }
 
     @Override
-    public void getProjectArticle(RxFragment fragment, int page, int cid) {
+    public void getProjectArticle(RxFragment fragment, int page, int cid, boolean isLoadMore) {
         model.getProjectArticles(page, cid).compose(RxHelper.observableIO2Main(fragment)).subscribe(new BaseResObserver<ArticlesInfo>() {
             @Override
             public void onSuccess(ArticlesInfo data) {
-                getBaseView().onProjectArticle(data.getDatas());
+                getBaseView().onProjectArticle(data.getDatas(), isLoadMore);
             }
 
             @Override
             public void onFailure(Throwable e, String error) {
-                getBaseView().onProjectArticleError(error);
+                getBaseView().onProjectArticleError(error, isLoadMore);
             }
         });
     }

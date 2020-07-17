@@ -14,11 +14,11 @@ public class WeChatContract {
     public interface IWeChatView extends IBaseView {
         void onWeCharTree(List<ArticlesTree> list);
 
-        void onWeChatArticles(List<Articles> list);
+        void onWeChatArticles(List<Articles> list, boolean isLoadMore);
 
         void onWeCharTreeError(String error);
 
-        void onWeChatArticlesError(String error);
+        void onWeChatArticlesError(String error, boolean isLoadMore);
 
         void onCollect(int position, boolean isCollect);
 
@@ -30,6 +30,6 @@ public class WeChatContract {
         void getWeChatTree(RxFragment fragment);
 
         //公众号文章
-        void getWeChatArticle(RxFragment fragment, int page, int cid);
+        void getWeChatArticle(RxFragment fragment, int page, int cid, boolean isLoadMore);
     }
 }

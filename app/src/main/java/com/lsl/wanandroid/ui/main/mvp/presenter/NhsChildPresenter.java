@@ -29,16 +29,16 @@ public class NhsChildPresenter extends BasePresenter<NhsChildContract.INhsChildV
     }
 
     @Override
-    public void getNhsArticle(RxFragment fragment, int page, int cid) {
+    public void getNhsArticle(RxFragment fragment, int page, int cid, boolean isLoadMore) {
         model.getNhsArticle(page, cid).compose(RxHelper.observableIO2Main(fragment)).subscribe(new BaseResObserver<ArticlesInfo>() {
             @Override
             public void onSuccess(ArticlesInfo data) {
-                getBaseView().onNhsArticle(data.getDatas());
+                getBaseView().onNhsArticle(data.getDatas(), isLoadMore);
             }
 
             @Override
             public void onFailure(Throwable e, String error) {
-                getBaseView().onError(error);
+                getBaseView().onError(error, isLoadMore);
             }
         });
     }

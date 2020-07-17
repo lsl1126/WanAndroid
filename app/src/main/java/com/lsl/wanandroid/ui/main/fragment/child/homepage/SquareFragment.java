@@ -23,6 +23,7 @@ import com.lsl.wanandroid.dialog.LoadingDialog;
 import com.lsl.wanandroid.ui.login.activity.LoginActivity;
 import com.lsl.wanandroid.ui.main.mvp.contract.SquareContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.SquarePresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -76,13 +78,13 @@ public class SquareFragment extends BaseLazyMvpFragment<SquareContract.ISquareVi
     @Override
     protected void initListener() {
         refreshLayout.setOnRefreshListener(this);
+        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(), list.get(position).getTitle(), list.get(position).getLink());
             }
         });
-        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -104,50 +106,43 @@ public class SquareFragment extends BaseLazyMvpFragment<SquareContract.ISquareVi
             @Override
             public void onLoadMore() {
                 page++;
-                presenter.getArticle(SquareFragment.this, page);
+                presenter.getArticle(SquareFragment.this, page, true);
             }
         });
-
-//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                onRefresh();
-//            }
-//        });
-        View view = multiStateView.getView(MultiStateView.ViewState.ERROR);
-        if (view != null) {
-            view.findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    list.clear();
-                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                    presenter.getArticle(SquareFragment.this, page);
-                }
-            });
-        }
+        Objects.requireNonNull(multiStateView.getView(MultiStateView.ViewState.ERROR)).findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+                page = 0;
+                list.clear();
+                presenter.getArticle(SquareFragment.this, page, false);
+            }
+        });
     }
 
     @Override
     protected void initLazyData() {
-        presenter.getArticle(this, page);
+        presenter.getArticle(this, page, false);
+    }
+
+    private void refresh() {
+        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+        page = 0;
+        dataNum = 0;
+        presenter.getArticle(SquareFragment.this, page, false);
     }
 
     @Override
     public void onRefresh() {
         page = 0;
         dataNum = 0;
-        presenter.getArticle(SquareFragment.this, page);
+        presenter.getArticle(SquareFragment.this, page, false);
     }
 
     @Override
-    public void onArticle(List<Articles> articlesList) {
+    public void onArticle(List<Articles> articlesList, boolean isLoadMore) {
         if (articlesList != null) {
-            if (refreshLayout.isRefreshing()) {
-                list.clear();
-                list.addAll(articlesList);
-                adapter.notifyDataSetChanged();
-                refreshLayout.setRefreshing(false);
-            } else {
+            if (isLoadMore) {
                 list.addAll(articlesList);
                 if (dataNum == list.size()) {
                     adapter.getLoadMoreModule().loadMoreEnd();
@@ -155,19 +150,37 @@ public class SquareFragment extends BaseLazyMvpFragment<SquareContract.ISquareVi
                     adapter.getLoadMoreModule().loadMoreComplete();
                     dataNum = list.size();
                 }
-                if (multiStateView.getViewState() != MultiStateView.ViewState.CONTENT) {
+            } else {
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                } else {
                     multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
                 }
+                list.clear();
+                list.addAll(articlesList);
+                adapter.notifyDataSetChanged();
             }
         } else {
-            multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
+            if (isLoadMore) {
+                adapter.getLoadMoreModule().loadMoreEnd();
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
+            }
         }
     }
 
     @Override
-    public void onError(String error) {
-        multiStateView.setViewState(MultiStateView.ViewState.ERROR);
-        adapter.getLoadMoreModule().loadMoreFail();
+    public void onError(String error, boolean isLoadMore) {
+        if (isLoadMore) {
+            adapter.getLoadMoreModule().loadMoreFail();
+        } else {
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+            }
+        }
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -192,13 +205,7 @@ public class SquareFragment extends BaseLazyMvpFragment<SquareContract.ISquareVi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginSuccess(Event event) {
         if (event.getMessage().equals(Constants.LOGIN_SUCCESS)) {
-            refreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    refreshLayout.setRefreshing(true);
-                    onRefresh();
-                }
-            });
+            refresh();
         }
     }
 

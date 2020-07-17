@@ -42,16 +42,16 @@ public class WeChatPresenter extends BasePresenter<WeChatContract.IWeChatView> i
     }
 
     @Override
-    public void getWeChatArticle(RxFragment fragment, int page, int cid) {
+    public void getWeChatArticle(RxFragment fragment, int page, int cid, boolean isLoadMore) {
         model.getWeChatArticle(page, cid).compose(RxHelper.observableIO2Main(fragment)).subscribe(new BaseResObserver<ArticlesInfo>() {
             @Override
             public void onSuccess(ArticlesInfo data) {
-                getBaseView().onWeChatArticles(data.getDatas());
+                getBaseView().onWeChatArticles(data.getDatas(), isLoadMore);
             }
 
             @Override
             public void onFailure(Throwable e, String error) {
-                getBaseView().onWeChatArticlesError(error);
+                getBaseView().onWeChatArticlesError(error, isLoadMore);
             }
         });
     }

@@ -24,16 +24,16 @@ public class SquarePresenter extends BasePresenter<SquareContract.ISquareView> i
     }
 
     @Override
-    public void getArticle(RxFragment fragment, int page) {
+    public void getArticle(RxFragment fragment, int page, boolean isLoadMore) {
         model.getArticles(page).compose(RxHelper.observableIO2Main(fragment)).subscribe(new BaseResObserver<ArticlesInfo>() {
             @Override
             public void onSuccess(ArticlesInfo data) {
-                getBaseView().onArticle(data.getDatas());
+                getBaseView().onArticle(data.getDatas(), isLoadMore);
             }
 
             @Override
             public void onFailure(Throwable e, String error) {
-                getBaseView().onError(error);
+                getBaseView().onError(error, isLoadMore);
             }
         });
     }

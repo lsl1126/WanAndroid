@@ -12,11 +12,11 @@ public class ProjectContract {
 
         void onProjectTree(List<ArticlesTree> list);
 
-        void onProjectArticle(List<Articles> list);
+        void onProjectArticle(List<Articles> list, boolean isLoadMore);
 
         void onProjectTreeError(String error);
 
-        void onProjectArticleError(String error);
+        void onProjectArticleError(String error, boolean isLoadMore);
 
         void onCollect(int position, boolean isCollect);
 
@@ -28,6 +28,6 @@ public class ProjectContract {
         void getProjectTree(RxFragment fragment);
 
         //项目文章
-        void getProjectArticle(RxFragment fragment, int page, int cid);
+        void getProjectArticle(RxFragment fragment, int page, int cid, boolean isLoadMore);
     }
 }

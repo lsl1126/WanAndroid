@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class SquareContract {
     public interface ISquareView extends IBaseView {
-        void onArticle(List<Articles> articles);
+        void onArticle(List<Articles> articles, boolean isLoadMore);
 
-        void onError(String error);
+        void onError(String error, boolean isLoadMore);
 
         void onCollect(int position, boolean isCollect);
 
@@ -22,6 +22,6 @@ public class SquareContract {
 
     public interface ISquarePresenter {
         //广场文章
-        void getArticle(RxFragment fragment, int page);
+        void getArticle(RxFragment fragment, int page, boolean isLoadMore);
     }
 }

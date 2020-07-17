@@ -125,6 +125,13 @@ public class NewestFragment extends BaseLazyMvpFragment<NewestContract.INewestVi
         presenter.getArticle(this, page, false);
     }
 
+    private void refresh() {
+        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+        page = 0;
+        dataNum = 0;
+        presenter.getArticle(NewestFragment.this, page, false);
+    }
+
     @Override
     public void onRefresh() {
         page = 0;
@@ -198,7 +205,7 @@ public class NewestFragment extends BaseLazyMvpFragment<NewestContract.INewestVi
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginSuccess(Event event) {
         if (event.getMessage().equals(Constants.LOGIN_SUCCESS)) {
-            onRefresh();
+            refresh();
         }
     }
 

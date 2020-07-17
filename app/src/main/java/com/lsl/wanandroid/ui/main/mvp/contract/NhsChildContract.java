@@ -9,9 +9,9 @@ import java.util.List;
 
 public class NhsChildContract {
     public interface INhsChildView extends IBaseView {
-        void onNhsArticle(List<Articles> list);
+        void onNhsArticle(List<Articles> list, boolean isLoadMore);
 
-        void onError(String error);
+        void onError(String error, boolean isLoadMore);
 
         void onCollect(int position, boolean isCollect);
 
@@ -21,6 +21,6 @@ public class NhsChildContract {
 
     public interface INhsChildPresenter {
         //体系文章
-        void getNhsArticle(RxFragment fragment, int page, int cid);
+        void getNhsArticle(RxFragment fragment, int page, int cid, boolean isLoadMore);
     }
 }

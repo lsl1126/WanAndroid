@@ -2,6 +2,7 @@ package com.lsl.wanandroid.ui.main.fragment.child.homepage;
 
 import android.os.Build;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.lsl.wanandroid.dialog.LoadingDialog;
 import com.lsl.wanandroid.ui.login.activity.LoginActivity;
 import com.lsl.wanandroid.ui.main.mvp.contract.HotContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.HotPresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.utils.Constants;
 import com.lsl.wanandroid.utils.PersistenceUtils;
 
@@ -34,13 +36,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 
 /**
  * Created by lsl on 2020/6/12/012.
  */
-public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresenter> implements HotContract.IHotView {
+public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresenter> implements HotContract.IHotView, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.multiStateView)
     MultiStateView multiStateView;
     @BindView(R.id.refreshLayout)
@@ -80,20 +83,14 @@ public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresen
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void initListener() {
-        adapter.getLoadMoreModule().setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                page++;
-                presenter.getArticle(HotFragment.this, page);
-            }
-        });
+        refreshLayout.setOnRefreshListener(this);
+        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(), list.get(position).getTitle(), list.get(position).getLink());
             }
         });
-        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -111,23 +108,21 @@ public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresen
                 }
             }
         });
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        adapter.getLoadMoreModule().setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onRefresh() {
+            public void onLoadMore() {
+                page++;
+                presenter.getArticle(HotFragment.this, page);
+            }
+        });
+        Objects.requireNonNull(multiStateView.getView(MultiStateView.ViewState.ERROR)).findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                list.clear();
+                multiStateView.setViewState(MultiStateView.ViewState.LOADING);
                 presenter.getAllArticle(HotFragment.this);
             }
         });
-        View view = multiStateView.getView(MultiStateView.ViewState.ERROR);
-        if (view != null) {
-            view.findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    list.clear();
-                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                    presenter.getAllArticle(HotFragment.this);
-                }
-            });
-        }
     }
 
 
@@ -136,25 +131,44 @@ public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresen
         presenter.getAllArticle(this);
     }
 
+    private void refresh() {
+        multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
+        presenter.getAllArticle(HotFragment.this);
+    }
+
+    @Override
+    public void onRefresh() {
+        presenter.getAllArticle(HotFragment.this);
+    }
+
     @Override
     public void onAllArticle(List<Articles> articlesList) {
-        if (refreshLayout.isRefreshing()) {
+        if (articlesList != null) {
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
+            }
             list.clear();
-            refreshLayout.setRefreshing(false);
-        }
-        if (list != null) {
-            multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
             list.addAll(articlesList);
             adapter.notifyDataSetChanged();
             dataNum = list.size();
         } else {
-            multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
+            }
         }
     }
 
     @Override
     public void onAllError(String error) {
-        multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+        if (refreshLayout.isRefreshing()) {
+            refreshLayout.setRefreshing(false);
+        } else {
+            multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+        }
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
@@ -173,7 +187,6 @@ public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresen
 
     @Override
     public void onLoadError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         adapter.getLoadMoreModule().loadMoreFail();
     }
 
@@ -199,9 +212,7 @@ public class HotFragment extends BaseMvpFragment<HotContract.IHotView, HotPresen
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginSuccess(Event event) {
         if (event.getMessage().equals(Constants.LOGIN_SUCCESS)) {
-            multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-            list.clear();
-            presenter.getAllArticle(this);
+            refresh();
         }
     }
 

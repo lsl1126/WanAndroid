@@ -29,6 +29,7 @@ import com.lsl.wanandroid.dialog.LoadingDialog;
 import com.lsl.wanandroid.ui.login.activity.LoginActivity;
 import com.lsl.wanandroid.ui.main.mvp.contract.NhsChildContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.NhsChildPresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,13 +38,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 
 /**
  * Create by lsl on 2020/6/15
  */
-public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsChildView, NhsChildPresenter> implements NhsChildContract.INhsChildView {
+public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsChildView, NhsChildPresenter> implements NhsChildContract.INhsChildView, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
@@ -101,13 +103,14 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
 
     @Override
     protected void initListener() {
+        refreshLayout.setOnRefreshListener(this);
+        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(), list.get(position).getTitle(), list.get(position).getLink());
             }
         });
-        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -129,40 +132,21 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
             @Override
             public void onLoadMore() {
                 page++;
-                presenter.getNhsArticle(NhsChildFragment.this, page, cid);
+                presenter.getNhsArticle(NhsChildFragment.this, page, cid, true);
             }
         });
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        Objects.requireNonNull(multiStateView.getView(MultiStateView.ViewState.ERROR)).findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                page = 0;
-                dataNum = 0;
-                presenter.getNhsArticle(NhsChildFragment.this, page, cid);
+            public void onClick(View v) {
+                refresh();
             }
         });
-        View view = multiStateView.getView(MultiStateView.ViewState.ERROR);
-        if (view != null) {
-            view.findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    list.clear();
-                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                    presenter.getNhsArticle(NhsChildFragment.this, page, cid);
-                }
-            });
-        }
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (childrenBeanList != null) {
-                    page = 0;
-                    dataNum = 0;
-                    list.clear();
-                    adapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(0);
                     cid = childrenBeanList.get(tab.getPosition()).getId();
-                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                    presenter.getNhsArticle(NhsChildFragment.this, page, cid);
+                    refresh();
                 }
             }
 
@@ -181,7 +165,6 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
     @Override
     protected void initLazyData() {
         if (childrenBeanList != null && childrenBeanList.size() > 0) {
-            tabLayout.setVisibility(View.VISIBLE);
             for (int i = 0; i < childrenBeanList.size(); i++) {
                 TabLayout.Tab tab = tabLayout.newTab();
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.item_tab, null);
@@ -189,35 +172,69 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
                 TextView tvText = view.findViewById(R.id.tv_Text);
                 tvText.setText(childrenBeanList.get(i).getName());
                 tabLayout.addTab(tab);
+                tabLayout.setVisibility(View.VISIBLE);
             }
         } else {
             multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
         }
     }
 
+    private void refresh() {
+        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+        page = 0;
+        dataNum = 0;
+        presenter.getNhsArticle(NhsChildFragment.this, page, cid, false);
+    }
+
     @Override
-    public void onNhsArticle(List<Articles> articlesList) {
+    public void onRefresh() {
+        page = 0;
+        dataNum = 0;
+        presenter.getNhsArticle(NhsChildFragment.this, page, cid, false);
+    }
+
+    @Override
+    public void onNhsArticle(List<Articles> articlesList, boolean isLoadMore) {
         if (articlesList != null) {
-            multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
-            if (refreshLayout.isRefreshing()) {
+            if (isLoadMore) {
+                list.addAll(articlesList);
+                if (dataNum == list.size()) {
+                    adapter.getLoadMoreModule().loadMoreEnd();
+                } else {
+                    adapter.getLoadMoreModule().loadMoreComplete();
+                    dataNum = list.size();
+                }
+            } else {
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                } else {
+                    multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
+                }
                 list.clear();
-                refreshLayout.setRefreshing(false);
+                list.addAll(articlesList);
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(0);
             }
-            list.addAll(articlesList);
-            if (list.size() == dataNum) {
+        } else {
+            if (isLoadMore) {
                 adapter.getLoadMoreModule().loadMoreEnd();
             } else {
-                adapter.getLoadMoreModule().loadMoreComplete();
-                dataNum = list.size();
+                multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
             }
-        } else {
-            multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
         }
     }
 
     @Override
-    public void onError(String error) {
-        multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+    public void onError(String error, boolean isLoadMore) {
+        if (isLoadMore) {
+            adapter.getLoadMoreModule().loadMoreFail();
+        } else {
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+            }
+        }
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
@@ -243,12 +260,7 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginSuccess(Event event) {
         if (event.getMessage().equals(Constants.LOGIN_SUCCESS)) {
-            tabLayout.setSelected(true);
-            //    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-//            list.clear();
-//            dataNum = 0;
-//            page = 0;
-//            presenter.getNhsArticle(this, page, cid);
+            refresh();
         }
     }
 
@@ -262,4 +274,6 @@ public class NhsChildFragment extends BaseLazyMvpFragment<NhsChildContract.INhsC
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
     }
+
+
 }

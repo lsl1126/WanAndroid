@@ -27,6 +27,7 @@ import com.lsl.wanandroid.dialog.LoadingDialog;
 import com.lsl.wanandroid.ui.login.activity.LoginActivity;
 import com.lsl.wanandroid.ui.main.mvp.contract.ProjectContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.ProjectPresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,13 +36,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 
 /**
  * Created by lsl on 2020/6/12/012.
  */
-public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjectView, ProjectPresenter> implements ProjectContract.IProjectView {
+public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjectView, ProjectPresenter> implements ProjectContract.IProjectView, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.multiStateView)
@@ -88,13 +90,14 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
 
     @Override
     protected void initListener() {
+        refreshLayout.setOnRefreshListener(this);
+        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(), list.get(position).getTitle(), list.get(position).getLink());
             }
         });
-        adapter.addChildClickViewIds(R.id.image_Collect);
         adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
@@ -116,54 +119,35 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
             @Override
             public void onLoadMore() {
                 page++;
-                presenter.getProjectArticle(ProjectFragment.this, page, cid);
+                presenter.getProjectArticle(ProjectFragment.this, page, cid, true);
             }
         });
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        Objects.requireNonNull(multiStateView.getView(MultiStateView.ViewState.ERROR)).findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                page = 1;
-                dataNum = 0;
-                presenter.getProjectArticle(ProjectFragment.this, page, cid);
+            public void onClick(View v) {
+                list.clear();
+                if (isProjectTreeError) {
+                    tabLayout.removeAllTabs();
+                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+                    presenter.getProjectTree(ProjectFragment.this);
+                } else {
+                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+                    presenter.getProjectArticle(ProjectFragment.this, page, cid, false);
+                }
             }
         });
-        View view = multiStateView.getView(MultiStateView.ViewState.ERROR);
-        if (view != null) {
-            view.findViewById(R.id.tv_reload).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    list.clear();
-                    if (isProjectTreeError) {
-                        tabLayout.removeAllTabs();
-                        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                        presenter.getProjectTree(ProjectFragment.this);
-                    } else {
-                        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                        presenter.getProjectArticle(ProjectFragment.this, page, cid);
-                    }
-                }
-            });
-        }
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (articlesTreeList != null) {
-                    page = 1;
-                    dataNum = 0;
-                    list.clear();
-                    adapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(0);
                     cid = articlesTreeList.get(tab.getPosition()).getId();
-                    multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-                    presenter.getProjectArticle(ProjectFragment.this, page, cid);
+                    refresh();
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
@@ -176,13 +160,25 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
         presenter.getProjectTree(this);
     }
 
+    private void refresh() {
+        multiStateView.setViewState(MultiStateView.ViewState.LOADING);
+        page = 1;
+        dataNum = 0;
+        presenter.getProjectArticle(ProjectFragment.this, page, cid, false);
+    }
+
+    @Override
+    public void onRefresh() {
+        page = 1;
+        dataNum = 0;
+        presenter.getProjectArticle(ProjectFragment.this, page, cid, false);
+    }
 
     @Override
     @SuppressLint("InflateParams")
     public void onProjectTree(List<ArticlesTree> treeList) {
         if (treeList != null && treeList.size() > 0) {
             articlesTreeList.addAll(treeList);
-            tabLayout.setVisibility(View.VISIBLE);
             for (ArticlesTree articlesTree : treeList) {
                 TabLayout.Tab tab = tabLayout.newTab();
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.item_tab, null);
@@ -191,27 +187,7 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
                 tvText.setText(articlesTree.getName());
                 tabLayout.addTab(tab);
             }
-        } else {
-            multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
-        }
-    }
-
-
-    @Override
-    public void onProjectArticle(List<Articles> articlesList) {
-        if (articlesList != null) {
-            multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
-            if (refreshLayout.isRefreshing()) {
-                list.clear();
-                refreshLayout.setRefreshing(false);
-            }
-            list.addAll(articlesList);
-            if (list.size() == dataNum) {
-                adapter.getLoadMoreModule().loadMoreEnd();
-            } else {
-                adapter.getLoadMoreModule().loadMoreComplete();
-                dataNum = list.size();
-            }
+            tabLayout.setVisibility(View.VISIBLE);
         } else {
             multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
         }
@@ -225,14 +201,54 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
     }
 
     @Override
-    public void onProjectArticleError(String error) {
+    public void onProjectArticle(List<Articles> articlesList, boolean isLoadMore) {
+        if (articlesList != null) {
+            if (isLoadMore) {
+                list.addAll(articlesList);
+                if (dataNum == list.size()) {
+                    adapter.getLoadMoreModule().loadMoreEnd();
+                } else {
+                    adapter.getLoadMoreModule().loadMoreComplete();
+                    dataNum = list.size();
+                }
+            } else {
+                if (refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                } else {
+                    multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
+                }
+                list.clear();
+                list.addAll(articlesList);
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(0);
+            }
+        } else {
+            if (isLoadMore) {
+                adapter.getLoadMoreModule().loadMoreEnd();
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.EMPTY);
+            }
+        }
+    }
+
+    @Override
+    public void onProjectArticleError(String error, boolean isLoadMore) {
         isProjectTreeError = false;
-        multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+        if (isLoadMore) {
+            adapter.getLoadMoreModule().loadMoreFail();
+        } else {
+            if (refreshLayout.isRefreshing()) {
+                refreshLayout.setRefreshing(false);
+            } else {
+                multiStateView.setViewState(MultiStateView.ViewState.ERROR);
+            }
+        }
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCollect(int position, boolean isCollect) {
+        loadingDialog.dismiss();
         if (isCollect) {
             list.get(position).setCollect(true);
             Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
@@ -245,16 +261,14 @@ public class ProjectFragment extends BaseLazyMvpFragment<ProjectContract.IProjec
 
     @Override
     public void onCollectError(String error) {
+        loadingDialog.dismiss();
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoginSuccess(Event event) {
         if (event.getMessage().equals(Constants.LOGIN_SUCCESS)) {
-            multiStateView.setViewState(MultiStateView.ViewState.LOADING);
-            articlesTreeList.clear();
-            tabLayout.removeAllTabs();
-            presenter.getProjectTree(this);
+            refresh();
         }
     }
 

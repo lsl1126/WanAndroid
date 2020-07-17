@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 
 import com.kennyc.view.MultiStateView;
 import com.lsl.wanandroid.R;
@@ -36,10 +37,14 @@ public class WebActivity extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.tv_Title)
     TextView tvTitle;
+    @BindView(R.id.scrollView)
+    NestedScrollView scrollView;
     @BindView(R.id.webView)
     WebView webView;
     @BindView(R.id.image_Collect)
     AppCompatImageView imageCollect;
+    private String title;
+
 
     public static void startIntent(Context context, String title, String url) {
         Intent intent = new Intent(context, WebActivity.class);
@@ -57,7 +62,6 @@ public class WebActivity extends BaseActivity {
     @Override
     protected void initView() {
         initToolBar(toolbar);
-
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -75,10 +79,23 @@ public class WebActivity extends BaseActivity {
     }
 
     @Override
+    protected void initListener() {
+        title = getIntent().getStringExtra("Title");
+        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY < 200) {
+                    tvTitle.setText(null);
+                } else {
+                    tvTitle.setText(title);
+                }
+            }
+        });
+    }
+
+    @Override
     protected void initData() {
-        String title = getIntent().getStringExtra("Title");
         String url = getIntent().getStringExtra("Url");
-        tvTitle.setText(title);
         webView.loadUrl(url);
     }
 
@@ -110,6 +127,4 @@ public class WebActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
 }
