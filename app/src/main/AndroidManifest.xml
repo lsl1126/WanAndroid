@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.lsl.wanandroid">
     <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,9 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ui.webView.WebActivity"></activity>
-        <!-- 引导页 -->
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
+        <activity android:name=".ui.webView.WebActivity" /> <!-- 引导页 -->
         <activity
             android:name=".ui.splash.SplashActivity"
             android:theme="@style/FixSystemWindowTheme">
@@ -22,10 +24,21 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 主页 -->
-        <activity android:name=".ui.main.activity.MainActivity" /> <!-- 搜索 -->
-        <activity android:name=".ui.search.activity.SearchActivity" /> <!-- 登录 -->
-        <activity android:name=".ui.login.activity.LoginActivity" />
+        </activity>
+        <!-- 主页 -->
+        <activity
+            android:name=".ui.main.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <!-- 搜索 -->
+        <activity
+            android:name=".ui.search.activity.SearchActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <!-- 登录 -->
+        <activity
+            android:name=".ui.login.activity.LoginActivity"
+            android:windowSoftInputMode="stateHidden" />
+
     </application>
 
 </manifest>

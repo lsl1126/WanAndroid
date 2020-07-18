@@ -88,4 +88,8 @@ public interface ApiService {
     //取消收藏站内文章
     @POST("lg/uncollect_originId/{id}/json")
     Observable<BaseResponse<String>> unCollect(@Path("id") int id);
+
+    //搜索关键词
+    @POST("article/query/{page}/json")
+    Observable<BaseResponse<ArticlesInfo>> search(@Path("page") int page, @Query("k") String text);
 }

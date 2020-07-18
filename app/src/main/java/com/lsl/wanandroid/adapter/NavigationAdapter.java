@@ -1,6 +1,7 @@
 package com.lsl.wanandroid.adapter;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -22,13 +23,14 @@ import java.util.List;
  */
 public class NavigationAdapter extends BaseQuickAdapter<Navigation, BaseViewHolder> {
 
-//    private final int dp5;
-//    private final int dp12;
+    private OnFlowItemClickListener onFlowItemClickListener;
+
+    public void setOnFlowItemClickListener(OnFlowItemClickListener onFlowItemClickListener) {
+        this.onFlowItemClickListener = onFlowItemClickListener;
+    }
 
     public NavigationAdapter(int layoutResId, @Nullable List<Navigation> data) {
         super(layoutResId, data);
-//        dp5 = DisplayUtils.dip2px(getContext(), 5);
-//        dp12 = DisplayUtils.dip2px(getContext(), 12);
     }
 
     @Override
@@ -45,5 +47,16 @@ public class NavigationAdapter extends BaseQuickAdapter<Navigation, BaseViewHold
                 return textView;
             }
         });
+        flowLayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
+            @Override
+            public boolean onTagClick(View view, int position, FlowLayout parent) {
+                onFlowItemClickListener.onItemClick(baseViewHolder.getAdapterPosition(), position);
+                return true;
+            }
+        });
+    }
+
+    public interface OnFlowItemClickListener {
+        void onItemClick(int position1, int position2);
     }
 }

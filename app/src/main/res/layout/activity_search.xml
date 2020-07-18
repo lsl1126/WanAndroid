@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -30,6 +30,7 @@
                 android:paddingRight="@dimen/dp_10">
 
                 <com.lsl.wanandroid.wdiget.ClearEditText
+                    android:id="@+id/et_Text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
@@ -45,6 +46,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/tv_Search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_16"
@@ -54,4 +56,110 @@
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/ll_All"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_HotKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:text="@string/text_hot_search"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/flowLayout_HotKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_14"
+                android:layout_marginTop="@dimen/dp_8"
+                android:layout_marginRight="@dimen/dp_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_History"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:text="@string/text_search_history"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_Delete"
+                    android:layout_width="@dimen/dp_25"
+                    android:layout_height="@dimen/dp_25"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_delete" />
+            </FrameLayout>
+
+
+            <com.zhy.view.flowlayout.TagFlowLayout
+                android:id="@+id/flowLayout_History"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_14"
+                android:layout_marginTop="@dimen/dp_8"
+                android:layout_marginRight="@dimen/dp_14" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.kennyc.view.MultiStateView
+        android:id="@+id/multiStateView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:msv_emptyView="@layout/empty_view"
+        app:msv_errorView="@layout/error_view"
+        app:msv_loadingView="@layout/loading_view"
+        app:msv_viewState="content">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </com.kennyc.view.MultiStateView>
 </LinearLayout>

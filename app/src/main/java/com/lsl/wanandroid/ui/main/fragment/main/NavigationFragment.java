@@ -1,10 +1,14 @@
 package com.lsl.wanandroid.ui.main.fragment.main;
 
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.kennyc.view.MultiStateView;
 import com.lsl.wanandroid.R;
 import com.lsl.wanandroid.adapter.NavigationAdapter;
@@ -12,6 +16,7 @@ import com.lsl.wanandroid.base.BaseMvpFragment;
 import com.lsl.wanandroid.bean.Navigation;
 import com.lsl.wanandroid.ui.main.mvp.contract.NavigationContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.NavigationPresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.wdiget.HeaderItemDecoration;
 
 import java.util.ArrayList;
@@ -51,6 +56,16 @@ public class NavigationFragment extends BaseMvpFragment<NavigationContract.INavi
     @Override
     protected void initData() {
         presenter.getNavigation(this);
+    }
+
+    @Override
+    protected void initListener() {
+        adapter.setOnFlowItemClickListener(new NavigationAdapter.OnFlowItemClickListener() {
+            @Override
+            public void onItemClick(int position1, int position2) {
+                WebActivity.startIntent(getContext(), list.get(position1).getName(), list.get(position1).getArticles().get(position2).getLink());
+            }
+        });
     }
 
     @Override

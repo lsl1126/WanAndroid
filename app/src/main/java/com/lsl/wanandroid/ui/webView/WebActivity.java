@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import androidx.core.widget.NestedScrollView;
 import com.kennyc.view.MultiStateView;
 import com.lsl.wanandroid.R;
 import com.lsl.wanandroid.base.BaseActivity;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +65,14 @@ public class WebActivity extends BaseActivity {
     @Override
     protected void initView() {
         initToolBar(toolbar);
-        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
+        webView.getSettings().setJavaScriptEnabled(true);//是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+        webView.getSettings().setSupportZoom(true);//是否可以缩放，默认true
+        webView.getSettings().setBuiltInZoomControls(true);//是否显示缩放按钮，默认false
+        webView.getSettings().setUseWideViewPort(true);//设置此属性，可任意比例缩放。大视图模式
+        webView.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
+        webView.getSettings().setAppCacheEnabled(true);//是否使用缓存
+        webView.getSettings().setDomStorageEnabled(true);//DOM Storage
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {

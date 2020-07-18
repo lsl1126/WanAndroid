@@ -22,6 +22,7 @@ import com.lsl.wanandroid.bean.Friend;
 import com.lsl.wanandroid.bean.HotKey;
 import com.lsl.wanandroid.ui.main.mvp.contract.DiscoverContract;
 import com.lsl.wanandroid.ui.main.mvp.presenter.DiscoverPresenter;
+import com.lsl.wanandroid.ui.webView.WebActivity;
 import com.lsl.wanandroid.utils.DisplayUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
@@ -55,6 +56,7 @@ public class DiscoverFragment extends BaseMvpFragment<DiscoverContract.IDiscover
     private HotKeyAdapter hotKeyAdapter;
     private List<Banners> bannersList = new ArrayList<>();
     private List<HotKey> hotKeyList = new ArrayList<>();
+    private List<Friend> friendList = new ArrayList<>();
 
 
     public static DiscoverFragment newInstance() {
@@ -104,7 +106,7 @@ public class DiscoverFragment extends BaseMvpFragment<DiscoverContract.IDiscover
         imageAdapter.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(Object data, int position) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(), bannersList.get(position).getTitle(), bannersList.get(position).getUrl());
             }
         });
         hotKeyAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -116,7 +118,7 @@ public class DiscoverFragment extends BaseMvpFragment<DiscoverContract.IDiscover
         flowLayout.setOnTagClickListener(new TagFlowLayout.OnTagClickListener() {
             @Override
             public boolean onTagClick(View view, int position, FlowLayout parent) {
-                Toast.makeText(getContext(), "Ok", Toast.LENGTH_SHORT).show();
+                WebActivity.startIntent(getContext(),friendList.get(position).getName(),friendList.get(position).getLink());
                 return true;
             }
         });
@@ -185,8 +187,10 @@ public class DiscoverFragment extends BaseMvpFragment<DiscoverContract.IDiscover
                 if (multiStateView.getViewState() != MultiStateView.ViewState.CONTENT) {
                     multiStateView.setViewState(MultiStateView.ViewState.CONTENT);
                 }
+                friendList.clear();
+                friendList.addAll(list);
                 flowLayout.removeAllViews();
-                flowLayout.setAdapter(new TagAdapter(list) {
+                flowLayout.setAdapter(new TagAdapter(friendList) {
                     @Override
                     public View getView(FlowLayout parent, int position, Object o) {
                         TextView textView = new TextView(getContext());

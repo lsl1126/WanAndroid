@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_solid_white_corner_8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_Message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/dp_25"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/sp_16"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_.5"
+        android:background="@color/color_gray500" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_No"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_weight="1"
+            android:background="@drawable/select_dialog_left"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="@dimen/dp_.5"
+            android:layout_height="match_parent"
+            android:background="@color/color_gray500" />
+
+        <TextView
+            android:id="@+id/tv_Yes"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_weight="1"
+            android:background="@drawable/select_dialog_right"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
+</LinearLayout>
