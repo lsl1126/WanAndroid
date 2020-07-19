@@ -20,6 +20,7 @@ import com.lsl.wanandroid.bean.QuickMultipleEntity;
 import com.lsl.wanandroid.bean.UiBean;
 import com.lsl.wanandroid.bean.User;
 import com.lsl.wanandroid.ui.login.activity.LoginActivity;
+import com.lsl.wanandroid.ui.my.myCoin.activity.MyCoinActivity;
 import com.lsl.wanandroid.utils.Constants;
 import com.lsl.wanandroid.utils.DisplayUtils;
 import com.lsl.wanandroid.utils.PersistenceUtils;
@@ -82,7 +83,7 @@ public class MyFragment extends BaseFragment {
                 if (isLogin()) {
                     switch (position) {
                         case 1:
-                            Toast.makeText(getContext(), "我的积分", Toast.LENGTH_SHORT).show();
+                            MyCoinActivity.startIntent(getContext());
                             break;
                         case 2:
                             Toast.makeText(getContext(), "我的分享", Toast.LENGTH_SHORT).show();

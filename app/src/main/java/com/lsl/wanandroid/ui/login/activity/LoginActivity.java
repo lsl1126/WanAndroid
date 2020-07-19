@@ -23,6 +23,7 @@ import com.lsl.wanandroid.ui.login.contract.LoginContract;
 import com.lsl.wanandroid.ui.login.presenter.LoginPresenter;
 import com.lsl.wanandroid.utils.Constants;
 import com.lsl.wanandroid.utils.PersistenceUtils;
+import com.lsl.wanandroid.utils.SoftKeyboardUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -58,7 +59,7 @@ public class LoginActivity extends BaseMvpActivity<LoginContract.ILoginView, Log
     protected void initView() {
         initToolBar(toolbar);
         presenter = new LoginPresenter();
-        loadingDialog = new LoadingDialog(this, "正在登录中...");
+        loadingDialog = new LoadingDialog(this, "正在登录...");
     }
 
     @OnClick(R.id.btn_Login)
@@ -66,6 +67,7 @@ public class LoginActivity extends BaseMvpActivity<LoginContract.ILoginView, Log
         if (view.getId() == R.id.btn_Login) {
             if (isVerify()) {
                 loadingDialog.show();
+                SoftKeyboardUtils.hideSoftKeyboard(this);
                 presenter.login(etUserName.getText().toString().trim(), etPassWord.getText().toString().trim(), this);
             }
         }

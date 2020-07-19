@@ -5,6 +5,8 @@ import com.lsl.wanandroid.bean.Articles;
 import com.lsl.wanandroid.bean.ArticlesInfo;
 import com.lsl.wanandroid.bean.ArticlesTree;
 import com.lsl.wanandroid.bean.Banners;
+import com.lsl.wanandroid.bean.Coin;
+import com.lsl.wanandroid.bean.CoinDetail;
 import com.lsl.wanandroid.bean.Friend;
 import com.lsl.wanandroid.bean.HotKey;
 import com.lsl.wanandroid.bean.Navigation;
@@ -92,4 +94,16 @@ public interface ApiService {
     //搜索关键词
     @POST("article/query/{page}/json")
     Observable<BaseResponse<ArticlesInfo>> search(@Path("page") int page, @Query("k") String text);
+
+    //个人积分
+    @GET("lg/coin/userinfo/json")
+    Observable<BaseResponse<Coin.DatasBean>> getMyCoin();
+
+    //个人积分明细
+    @GET("lg/coin/list/{page}/json")
+    Observable<BaseResponse<CoinDetail>> getMyCoinDetails(@Path("page") int page);
+
+    //积分排行榜
+    @GET("coin/rank/{page}/json")
+    Observable<BaseResponse<Coin>> getCoinRank(@Path("page") int page);
 }

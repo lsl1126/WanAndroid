@@ -13,11 +13,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
     <style name="Dialog_style" parent="android:style/Theme.Dialog">
         <!--Dialog的windowFrame框为无-->
         <item name="android:windowFrame">@null</item>
