@@ -22,4 +22,6 @@
     <string name="text_search_history">历史搜索</string>
     <string name="text_my_coin">我的积分</string>
     <string name="text_0">0</string>
+    <string name="text_coin_rank">积分排行榜</string>
+    <string name="text_my_collect">我的收藏</string>
 </resources>

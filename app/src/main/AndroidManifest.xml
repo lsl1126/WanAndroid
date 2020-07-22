@@ -56,7 +56,7 @@
             android:windowSoftInputMode="stateHidden" />
         <!-- 我的收藏 -->
         <activity
-            android:name=".ui.my.myCollect.MyCollectActivity"
+            android:name=".ui.my.myCollect.activity.MyCollectActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <!-- 我的分享 -->

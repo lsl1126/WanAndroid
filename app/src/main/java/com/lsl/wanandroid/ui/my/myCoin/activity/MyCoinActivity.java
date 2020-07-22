@@ -5,8 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,7 +23,6 @@ import com.lsl.wanandroid.adapter.CoinDetailsAdapter;
 import com.lsl.wanandroid.base.BaseMvpActivity;
 import com.lsl.wanandroid.bean.Coin;
 import com.lsl.wanandroid.bean.CoinDetail;
-import com.lsl.wanandroid.ui.main.fragment.child.homepage.NewestFragment;
 import com.lsl.wanandroid.ui.my.myCoin.mvp.contract.MyCoinContract;
 import com.lsl.wanandroid.ui.my.myCoin.mvp.presenter.MyCoinPresenter;
 
@@ -35,18 +32,19 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MyCoinActivity extends BaseMvpActivity<MyCoinContract.IMyCoinView, MyCoinPresenter> implements MyCoinContract.IMyCoinView {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.image_Rank)
     AppCompatImageView imageRank;
-    @BindView(R.id.tv_Coin)
-    TextView tvCoin;
     @BindView(R.id.multiStateView)
     MultiStateView multiStateView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.tv_Coin)
+    TextView tvCoin;
 
     private MyCoinPresenter presenter;
     private CoinDetailsAdapter adapter;
@@ -76,7 +74,6 @@ public class MyCoinActivity extends BaseMvpActivity<MyCoinContract.IMyCoinView, 
         adapter = new CoinDetailsAdapter(R.layout.item_coin_details, list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-        adapter.addHeaderView(LayoutInflater.from(this).inflate(R.layout.layout_my_coin, null, false));
     }
 
     @Override
@@ -102,18 +99,25 @@ public class MyCoinActivity extends BaseMvpActivity<MyCoinContract.IMyCoinView, 
         presenter.getMyCoinDetails(page, this, false);
     }
 
+    @OnClick(R.id.image_Rank)
+    public void onViewClicked(View view) {
+        if (view.getId() == R.id.image_Rank) {
+            MyCoinRankActivity.startIntent(this);
+        }
+    }
+
     @Override
     public void onMyCoin(Coin.DatasBean coin) {
-//        animator = ValueAnimator.ofFloat(0, coin.getCoinCount());
-//        animator.setDuration(1000);
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                String text = animation.getAnimatedValue().toString();
-//                tvCoin.setText(text.substring(0, text.indexOf(".")));
-//            }
-//        });
-//        animator.start();
+        animator = ValueAnimator.ofFloat(0, coin.getCoinCount());
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                String text = animation.getAnimatedValue().toString();
+                tvCoin.setText(text.substring(0, text.indexOf(".")));
+            }
+        });
+        animator.start();
     }
 
     @Override
@@ -177,4 +181,5 @@ public class MyCoinActivity extends BaseMvpActivity<MyCoinContract.IMyCoinView, 
     protected MyCoinPresenter getPresenter() {
         return presenter;
     }
+
 }

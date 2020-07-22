@@ -106,4 +106,8 @@ public interface ApiService {
     //积分排行榜
     @GET("coin/rank/{page}/json")
     Observable<BaseResponse<Coin>> getCoinRank(@Path("page") int page);
+
+    //我的收藏
+    @GET("lg/collect/list/{page}/json")
+    Observable<BaseResponse<ArticlesInfo>> getMyCollect(@Path("page") int page);
 }
