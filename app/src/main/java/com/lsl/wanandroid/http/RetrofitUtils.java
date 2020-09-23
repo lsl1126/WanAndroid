@@ -40,17 +40,12 @@ public class RetrofitUtils {
     }
 
     private ApiService getRetrofit() {
-        return initRetrofit().create(ApiService.class);
-    }
-
-
-    private Retrofit initRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(getClient())
-                .build();
+                .build().create(ApiService.class);
     }
 
     private OkHttpClient getClient() {
